@@ -32,10 +32,13 @@ int main()
 {
 	string a="103";
 	string b="205";
-	cin>>a>>b;
-	radix36 r1(a);
-	radix36 r2(b);
-	radix36 r3=r2+r1;
+	
+	while(cin>>a)
+	{
+		cin>>b;
+		radix36 r1(a);
+		radix36 r2(b);
+		radix36 r3=r2+r1;
 	/*
 	for(char ch:a)
 		cout<<ch;
@@ -46,7 +49,8 @@ int main()
 		cout<<*beg;
 		++beg;
 	}*/
-	cout<<r1<<endl<<r2<<endl<<r3;
-	cout<<endl;
+		cout<<r3;
+		cout<<endl;
+	}
 	return 0;
 }

@@ -23,10 +23,10 @@ public:
 //to see if the value_for_calcualting is equal to -1, that is, the ch for initialization is not the characters in the range of radix36_element.      
 	
 	void operator=(const radix36_element &);
-	friend radix36_element& operator+(const radix36_element &,const int &);
-	friend radix36_element& operator+(const radix36_element &,const radix36_element &);
-	friend radix36_element& operator-(const radix36_element &,const radix36_element &);  
-	friend radix36_element& operator*(const radix36_element &,const radix36_element &);  
+	friend radix36_element operator+(const radix36_element &,const int &);
+	friend radix36_element operator+(const radix36_element &,const radix36_element &);
+	friend radix36_element operator-(const radix36_element &,const radix36_element &);  
+	friend radix36_element operator*(const radix36_element &,const radix36_element &);  
 	//friend radix36_element& operator/(const radix36_element &,const radix36_element &);
 	friend std::ostream& operator<<(std::ostream &,const radix36_element &);
 	//friend std::istream& operator>>(std::isttream &,const radix36_element &);
@@ -38,7 +38,7 @@ public:
 private:
 	void init(char ch)//use a char-type value to initialize this and get the corresponding by the way.
 	{
-		char element=ch;
+		element=ch;
                 if(((int)ch-(int)'0')>=0&&((int)ch-(int)'0'<=9))
                         value_for_calculating=(int)ch-(int)'0';
                 else if(((int)ch-(int)'a')>=0&&((int)ch-(int)'a'<=25))
@@ -70,7 +70,7 @@ public:
 	}
 	
 	friend std::ostream& operator<<(std::ostream &,const radix36 &);
-	friend radix36& operator+(const radix36 &,const radix36 &);
+	friend radix36 operator+(const radix36 &,const radix36 &);
 	//friend radix36& operator*(const radix36 &,const radix36 &);
 	//friend radix36& operator-(const radix36 &,const radix36 &);
 	//friend radix36& operator/(const radix36 &,const radix36 &);

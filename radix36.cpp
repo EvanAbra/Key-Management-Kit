@@ -21,15 +21,15 @@ void radix36_element::operator=(const radix36_element &re)
 	carry=re.carry;
 }
 
-radix36_element& operator+(const radix36_element &re1, const int &carry)
+radix36_element operator+(const radix36_element &re1, const int &carry)
 {
 	int result=re1.get_the_value()+carry;
-	int ca=(int)(result/35)+re1.get_the_carry();
+	int ca=(int)(result/36)+re1.get_the_carry();
 	char ele;
 	if(result>35)
-		result=35;
+		result=result-36;
 
-	if(result>=0||result<=9)
+	if(result>=0&&result<=9)
 		ele=(char)((int)'0'+result);
 	else 
 		ele=(char)((int)'a'+(result-10));
@@ -38,16 +38,16 @@ radix36_element& operator+(const radix36_element &re1, const int &carry)
 	return re;
 }
 
-radix36_element& operator+(const radix36_element &re1, const radix36_element &re2)
+radix36_element operator+(const radix36_element &re1, const radix36_element &re2)
 {
 	int result=re1.get_the_value()+re2.get_the_value();
-	int ca=(int)(result/35);//the value of carry;
+	int ca=(int)(result/36)+re1.get_the_carry()+re2.get_the_carry();//the value of carry;
 	char ele;//the character corresponding to the value;
 	if(result>35)
-		result=35;
+		result=result-36;
 	
 	//计算出对应的字符
-	if(result>=0||result<=9)
+	if(result>=0&&result<=9)
 	{
 		ele=(char)((int)'0'+result);
 	}
@@ -60,16 +60,16 @@ radix36_element& operator+(const radix36_element &re1, const radix36_element &re
 	return re;
 }
 
-radix36_element& operator*(const radix36_element &re1, const radix36_element &re2)
+radix36_element operator*(const radix36_element &re1, const radix36_element &re2)
 {
 	int result=re1.get_the_value()*re2.get_the_value();
-	int ca=(int)(result/35);
+	int ca=(int)(result/36);
 	char ele;
-	if(result>35)
-		result=35;
+	while(result>35)
+		result=result-36;
 	
 	//计算出对应的字符
-	if(result>=0||result<=9)
+	if(result>=0&&result<=9)
 	{
 		ele=(char)((int)'0'+result);
 	}
@@ -82,16 +82,16 @@ radix36_element& operator*(const radix36_element &re1, const radix36_element &re
 	return re;
 }
 
-radix36_element& operator-(const radix36_element &re1, const radix36_element &re2)
+radix36_element operator-(const radix36_element &re1, const radix36_element &re2)
 {
 	int result=re1.get_the_value()-re2.get_the_value();
-	int ca=(int)(result/35);//used to store the carry
+	int ca=(int)(result/36);//used to store the carry
 	char ele;
 	if(result<0)
 		result=result+36;
 
 	//计算出对应的字符
-	if(result>=0||result<=9)
+	if(result>=0&&result<=9)
 	{
 		ele=(char)((int)'0'+result);
 	}
@@ -139,7 +139,7 @@ ostream& operator<<(ostream &os,const radix36 &r)
 	return os;
 }
 
-radix36& operator+(const radix36 &r1,const radix36 &r2)
+radix36 operator+(const radix36 &r1,const radix36 &r2)
 {
 	radix36 r;
 	int smaller_size=r1.get_vec_size();
