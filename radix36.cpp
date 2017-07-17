@@ -21,12 +21,26 @@ void radix36_element::operator=(const radix36_element &re)
 	carry=re.carry;
 }
 
+bool radix36_element::operator>(const radix36_element &re)
+{
+	if(value_for_calculating>re.value_for_calculating)
+		return true;
+	else
+		return false;
+}
+
 radix36_element operator+(const radix36_element &re1, const int &carry)
 {
 	int result=re1.get_the_value()+carry;
-	int ca=(int)(result/36)+re1.get_the_carry();
+	int ca;
+	if(result<0)
+		ca=-1;
+	else
+		ca=(int)(result/36)+re1.get_the_carry();
 	char ele;
-	if(result>35)
+	if(result<0)
+		result=result+36;
+	else if(result>35)
 		result=result-36;
 
 	if(result>=0&&result<=9)
@@ -85,7 +99,11 @@ radix36_element operator*(const radix36_element &re1, const radix36_element &re2
 radix36_element operator-(const radix36_element &re1, const radix36_element &re2)
 {
 	int result=re1.get_the_value()-re2.get_the_value();
-	int ca=(int)(result/36);//used to store the carry
+	int ca;//used to store the carry
+	if(result<0)
+		ca=-1;
+	else 
+		ca=0;
 	char ele;
 	if(result<0)
 		result=result+36;
@@ -132,6 +150,8 @@ void radix36_element::clear_the_carry()
 //the define for the function appeared in the class radix36
 ostream& operator<<(ostream &os,const radix36 &r)
 {
+	if(!r.if_positive())
+		os<<'-';
 	for(int i=r.get_vec_size()-1;i>=0;i--)
 	{
 		os<<r.get_char_in_vec(i);
@@ -180,9 +200,86 @@ radix36 operator+(const radix36 &r1,const radix36 &r2)
 	return r;
 }
 
+radix36 operator-(const radix36 &r1,const radix36 &r2)
+{
+	radix36 r;
+	bool po=(r1>r2);
+	r.set_positive(po);
+	int carry=0;
+	if(po==true)//po==true means that r1-r2>=0
+	{
+		for(int i=0;i<r2.get_vec_size();i++)
+		{
+			radix36_element nre=r1.get_char_in_vec(i)-r2.get_char_in_vec(i)+carry;
+			carry=nre.get_the_carry();
+			nre.clear_the_carry();
+			r.add_the_element(nre);
+		}
+		for(int i=r2.get_vec_size();i<r1.get_vec_size();i++)
+		{
+			radix36_element nre=r1.get_char_in_vec(i)+carry;
+			carry=nre.get_the_carry();
+			nre.clear_the_carry();
+			r.add_the_element(nre);
+		}
+	}
+	else
+	{
+		for(int i=0;i<r1.get_vec_size();i++)
+		{
+			radix36_element nre=r2.get_char_in_vec(i)-r1.get_char_in_vec(i)+carry;
+			carry=nre.get_the_carry();
+			nre.clear_the_carry();
+			r.add_the_element(nre);
+		}
+		for(int i=r1.get_vec_size();i<r2.get_vec_size();i++)
+		{
+			radix36_element nre=r2.get_char_in_vec(i)+carry;
+			carry=nre.get_the_carry();
+			nre.clear_the_carry();
+			r.add_the_element(nre);
+		}	
+	}
+
+	return r;
+}
+
+bool operator>(const radix36 &r1,const radix36 &r2)
+{
+	bool flag=false;
+	if(r1.get_vec_size()>r2.get_vec_size())
+		return true;
+	else if(r1.get_vec_size()>r2.get_vec_size())
+		return false;
+	for(int i=0;i<r1.get_vec_size();i++)
+	{
+		if(r1.get_char_in_vec(r1.get_vec_size()-1)>r2.get_char_in_vec(r2.get_vec_size()-1))
+		{
+			flag=true;
+			break;
+		}
+		else if(r1.get_char_in_vec(r1.get_vec_size()-1)>r2.get_char_in_vec(r2.get_vec_size()-1))
+		{
+			flag=false;
+			break;
+		}
+	}	
+	return flag;
+}
+
 void radix36::add_the_element(radix36_element &re)
 {
 	vec.push_back(re);
+}
+
+bool radix36::if_positive() const
+{
+	return positive;
+}
+
+void radix36::set_positive(const bool &flag)
+{
+	positive=flag;
 }
 
 void radix36::operator=(radix36 &r)

@@ -38,7 +38,8 @@ int main()
 		cin>>b;
 		radix36 r1(a);
 		radix36 r2(b);
-		radix36 r3=r2+r1;
+		radix36 r3=r1+r2;
+		radix36 r4=r1-r2;
 	/*
 	for(char ch:a)
 		cout<<ch;
@@ -48,9 +49,10 @@ int main()
 	{
 		cout<<*beg;
 		++beg;
-	}*/
-		cout<<r3;
-		cout<<endl;
+	}
+	*/
+		cout<<r1<<"+"<<r2<<"="<<r3<<endl
+		<<r1<<"-"<<r2<<"="<<r4<<endl;
 	}
 	return 0;
 }

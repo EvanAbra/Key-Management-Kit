@@ -27,6 +27,7 @@ public:
 	friend radix36_element operator+(const radix36_element &,const radix36_element &);
 	friend radix36_element operator-(const radix36_element &,const radix36_element &);  
 	friend radix36_element operator*(const radix36_element &,const radix36_element &);  
+	bool operator>(const radix36_element &);
 	//friend radix36_element& operator/(const radix36_element &,const radix36_element &);
 	friend std::ostream& operator<<(std::ostream &,const radix36_element &);
 	//friend std::istream& operator>>(std::isttream &,const radix36_element &);
@@ -72,12 +73,15 @@ public:
 	friend std::ostream& operator<<(std::ostream &,const radix36 &);
 	friend radix36 operator+(const radix36 &,const radix36 &);
 	//friend radix36& operator*(const radix36 &,const radix36 &);
-	//friend radix36& operator-(const radix36 &,const radix36 &);
+	friend radix36 operator-(const radix36 &,const radix36 &);
 	//friend radix36& operator/(const radix36 &,const radix36 &);
+	friend bool operator>(const radix36 &,const radix36 &);
 	void operator=(radix36 &);
 
 	void add_the_element(radix36_element &);	
-	inline int get_vec_size()const;
+	bool if_positive() const;
+	void set_positive(const bool &);
+	inline int get_vec_size() const;
 	inline radix36_element get_char_in_vec(int)const;//take the subscript as the parameter and return the corresponding element.
 private:
 	void init(std::string str)
