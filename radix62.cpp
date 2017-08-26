@@ -1,12 +1,12 @@
 #include<iostream>
 #include<string>
 #include<queue>
-#include"radix36.h"
+#include"radix62.h"
 
 using namespace std;
 
 //the define for the function appeared in the class radix36_element
-bool radix36_element::if_the_initialization_is_failed() const
+bool radix62_element::if_the_initialization_is_failed() const
 {
 	if(value_for_calculating==-1)
 		return false;
@@ -14,14 +14,14 @@ bool radix36_element::if_the_initialization_is_failed() const
 		return true;
 }
 
-void radix36_element::operator=(const radix36_element &re)
+void radix62_element::operator=(const radix62_element &re)
 {
 	element=re.element;
 	value_for_calculating=re.value_for_calculating;
 	carry=re.carry;
 }
 
-bool radix36_element::operator>(const radix36_element &re)
+bool radix62_element::operator>(const radix62_element &re)
 {
 	if(value_for_calculating>re.value_for_calculating)
 		return true;
@@ -29,7 +29,7 @@ bool radix36_element::operator>(const radix36_element &re)
 		return false;
 }
 
-bool radix36_element::operator<(const radix36_element &re)
+bool radix62_element::operator<(const radix62_element &re)
 {
 	if(value_for_calculating<re.value_for_calculating)
 		return true;
@@ -37,7 +37,7 @@ bool radix36_element::operator<(const radix36_element &re)
 		return false;
 }
 
-bool radix36_element::operator==(const radix36_element &re)
+bool radix62_element::operator==(const radix62_element &re)
 {
 	if(value_for_calculating==re.value_for_calculating)
 		return true;
@@ -45,7 +45,7 @@ bool radix36_element::operator==(const radix36_element &re)
 		return false;
 }
 
-bool radix36_element::operator>=(const radix36_element &re)
+bool radix62_element::operator>=(const radix62_element &re)
 {
 	if(value_for_calculating>=re.value_for_calculating)
 		return true;
@@ -53,7 +53,7 @@ bool radix36_element::operator>=(const radix36_element &re)
 		return false;
 }
 
-bool radix36_element::operator<=(const radix36_element &re)
+bool radix62_element::operator<=(const radix62_element &re)
 {
 	if(value_for_calculating<=re.value_for_calculating)
 		return true;
@@ -61,74 +61,80 @@ bool radix36_element::operator<=(const radix36_element &re)
 		return false;
 }
 
-radix36_element operator+(const radix36_element &re1, const int &carry)
+radix62_element operator+(const radix62_element &re1, const int &carry)
 {
 	int result=re1.get_the_value()+carry;
 	int ca;
 	if(result<0)
 		ca=-1;
 	else
-		ca=(int)(result/36)+re1.get_the_carry();
+		ca=(int)(result/62)+re1.get_the_carry();
 	char ele;
 	if(result<0)
-		result=result+36;
-	else if(result>35)
+		result=result+62;
+	else if(result>61)
 		result=result-36;
 
 	if(result>=0&&result<=9)
 		ele=(char)((int)'0'+result);
-	else 
+	else if(result>=10&&result<=35)
 		ele=(char)((int)'a'+(result-10));
+	else
+		ele=(char)((int)'A'+(result-36));
 
-	radix36_element re(ele,ca);
+	radix62_element re(ele,ca);
 	return re;
 }
 
-radix36_element operator+(const radix36_element &re1, const radix36_element &re2)
+radix62_element operator+(const radix62_element &re1, const radix62_element &re2)
 {
 	int result=re1.get_the_value()+re2.get_the_value();
-	int ca=(int)(result/36)+re1.get_the_carry()+re2.get_the_carry();//the value of carry;
+	int ca=(int)(result/62)+re1.get_the_carry()+re2.get_the_carry();//the value of carry;
 	char ele;//the character corresponding to the value;
-	if(result>35)
-		result=result-36;
+	if(result>61)
+		result=result-62;
 	
 	//计算出对应的字符
 	if(result>=0&&result<=9)
 	{
 		ele=(char)((int)'0'+result);
 	}
-	else
+	else if(result>=10&&result<=35)
 	{
 		ele=(char)((int)'a'+(result-10));
 	}
-	
-	radix36_element re(ele,ca);
+	else
+		ele=(char)((int)'A'+(result-36));
+
+	radix62_element re(ele,ca);
 	return re;
 }
 
-radix36_element operator*(const radix36_element &re1, const radix36_element &re2)
+radix62_element operator*(const radix62_element &re1, const radix62_element &re2)
 {
 	int result=re1.get_the_value()*re2.get_the_value();
-	int ca=(int)(result/36);
+	int ca=(int)(result/62);
 	char ele;
-	while(result>35)
-		result=result-36;
+	while(result>61)
+		result=result-62;
 	
 	//计算出对应的字符
 	if(result>=0&&result<=9)
 	{
 		ele=(char)((int)'0'+result);
 	}
-	else
+	else if(result>=10&&result<=35)
 	{
 		ele=(char)((int)'a'+(result-10));
 	}
+	else
+		ele=(char)((int)'A'+(result-36));
 
-	radix36_element re(ele,ca);
+	radix62_element re(ele,ca);
 	return re;
 }
 
-radix36_element operator-(const radix36_element &re1, const radix36_element &re2)
+radix62_element operator-(const radix62_element &re1, const radix62_element &re2)
 {
 	int result=re1.get_the_value()-re2.get_the_value();
 	int ca;//used to store the carry
@@ -138,49 +144,51 @@ radix36_element operator-(const radix36_element &re1, const radix36_element &re2
 		ca=0;
 	char ele;
 	if(result<0)
-		result=result+36;
+		result=result+62;
 
 	//计算出对应的字符
 	if(result>=0&&result<=9)
 	{
 		ele=(char)((int)'0'+result);
 	}
-	else
+	else if(result>=10&&result<=35)
 	{
 		ele=(char)((int)'a'+(result-10));
 	}
+	else 
+		ele=(char)((int)'A'+(result-36));
 
-	radix36_element re(ele,ca);
+	radix62_element re(ele,ca);
 	return re;
 }
 
-ostream& operator<<(ostream &os,const radix36_element &re)
+ostream& operator<<(ostream &os,const radix62_element &re)
 {
 	os<<re.get_the_element();
 	return os;
 }
 
-char radix36_element::get_the_element() const
+char radix62_element::get_the_element() const
 {
 	return element;
 }
 
-int radix36_element::get_the_value() const
+int radix62_element::get_the_value() const
 {
 	return value_for_calculating;
 }
 
-int radix36_element::get_the_carry() const
+int radix62_element::get_the_carry() const
 {
 	return carry;
 }
 
-void radix36_element::clear_the_carry()
+void radix62_element::clear_the_carry()
 {
 	carry=0;
 }
 //the define for the function appeared in the class radix36
-ostream& operator<<(ostream &os,const radix36 &r)
+ostream& operator<<(ostream &os,const radix62 &r)
 {
 	if(!r.if_positive())
 		os<<'-';
@@ -191,9 +199,9 @@ ostream& operator<<(ostream &os,const radix36 &r)
 	return os;
 }
 
-radix36 operator+(const radix36 &r1,const radix36 &r2)
+radix62 operator+(const radix62 &r1,const radix62 &r2)
 {
-	radix36 r;
+	radix62 r;
 	int smaller_size=r1.get_vec_size();
 	int bigger_size=r2.get_vec_size();
 	if(smaller_size>bigger_size)
@@ -201,7 +209,7 @@ radix36 operator+(const radix36 &r1,const radix36 &r2)
 	int carry=0;
 	for(int i=0;i<smaller_size;i++)
 	{
-		radix36_element nre=r1.get_char_in_vec(i)+r2.get_char_in_vec(i)+carry;
+		radix62_element nre=r1.get_char_in_vec(i)+r2.get_char_in_vec(i)+carry;
 		carry=nre.get_the_carry();
 		nre.clear_the_carry();
 		r.add_the_element(nre);	
@@ -210,14 +218,14 @@ radix36 operator+(const radix36 &r1,const radix36 &r2)
 	{
 		if(r1.get_vec_size()>r2.get_vec_size())
 		{
-			radix36_element nre=r1.get_char_in_vec(i)+carry;
+			radix62_element nre=r1.get_char_in_vec(i)+carry;
 			carry=nre.get_the_carry();
 			nre.clear_the_carry();
 			r.add_the_element(nre);
 		}
 		else
 		{
-			radix36_element nre=r2.get_char_in_vec(i)+carry;
+			radix62_element nre=r2.get_char_in_vec(i)+carry;
 			carry=nre.get_the_carry();
 			nre.clear_the_carry();
 			r.add_the_element(nre);
@@ -225,16 +233,16 @@ radix36 operator+(const radix36 &r1,const radix36 &r2)
 	}	
 	if(carry!=0)
 	{
-		radix36_element nre('1');
+		radix62_element nre('1');
 		r.add_the_element(nre);
 	}
 	
 	return r;
 }
 
-radix36 operator-(const radix36 &r1,const radix36 &r2)
+radix62 operator-(const radix62 &r1,const radix62 &r2)
 {
-	radix36 r;
+	radix62 r;
 	bool po=(r1>=r2);
 	r.set_positive(po);
 	int carry=0;
@@ -242,14 +250,14 @@ radix36 operator-(const radix36 &r1,const radix36 &r2)
 	{
 		for(int i=0;i<r2.get_vec_size();i++)
 		{
-			radix36_element nre=r1.get_char_in_vec(i)-r2.get_char_in_vec(i)+carry;
+			radix62_element nre=r1.get_char_in_vec(i)-r2.get_char_in_vec(i)+carry;
 			carry=nre.get_the_carry();
 			nre.clear_the_carry();
 			r.add_the_element(nre);
 		}
 		for(int i=r2.get_vec_size();i<r1.get_vec_size();i++)
 		{
-			radix36_element nre=r1.get_char_in_vec(i)+carry;
+			radix62_element nre=r1.get_char_in_vec(i)+carry;
 			carry=nre.get_the_carry();
 			nre.clear_the_carry();
 			r.add_the_element(nre);
@@ -259,14 +267,14 @@ radix36 operator-(const radix36 &r1,const radix36 &r2)
 	{
 		for(int i=0;i<r1.get_vec_size();i++)
 		{
-			radix36_element nre=r2.get_char_in_vec(i)-r1.get_char_in_vec(i)+carry;
+			radix62_element nre=r2.get_char_in_vec(i)-r1.get_char_in_vec(i)+carry;
 			carry=nre.get_the_carry();
 			nre.clear_the_carry();
 			r.add_the_element(nre);
 		}
 		for(int i=r1.get_vec_size();i<r2.get_vec_size();i++)
 		{
-			radix36_element nre=r2.get_char_in_vec(i)+carry;
+			radix62_element nre=r2.get_char_in_vec(i)+carry;
 			carry=nre.get_the_carry();
 			nre.clear_the_carry();
 			r.add_the_element(nre);
@@ -276,13 +284,13 @@ radix36 operator-(const radix36 &r1,const radix36 &r2)
 	return r;
 }
 
-radix36 operator*(const radix36 &r1,const radix36 &r2)
+radix62 operator*(const radix62 &r1,const radix62 &r2)
 {
-	radix36 r;
+	radix62 r;
 	for(int i=0;i<r1.get_vec_size();i++)
 		for(int j=0;j<r2.get_vec_size();j++)
 		{
-			radix36_element nre=r1.get_char_in_vec(i)*r2.get_char_in_vec(j);
+			radix62_element nre=r1.get_char_in_vec(i)*r2.get_char_in_vec(j);
 			if(r.get_vec_size()<(i+j+1))
 				r.add_the_element(nre);
 			else
@@ -293,32 +301,35 @@ radix36 operator*(const radix36 &r1,const radix36 &r2)
 	int carry=0;
 	for(int i=0;i<r.get_vec_size();i++)
 	{	
-		radix36_element nre=r.get_char_in_vec(i)+carry;
+		radix62_element nre=r.get_char_in_vec(i)+carry;
 		carry=nre.get_the_carry();
 		nre.clear_the_carry();
 		r.change_element_in_vec(nre,i+1);
 	}
 	if(carry!=0)
 	{
-		char ele;
-		//计算出对应的字符
+		char ele;	
+		
+		//计算出对应字符
 		if(carry>=0&&carry<=9)
 		{
 			ele=(char)((int)'0'+carry);
 		}
-		else
+		else if(carry>=10&&carry<=35)
 		{
 			ele=(char)((int)'a'+(carry-10));
 		}
+		else 
+			ele=(char)((int)'A'+(carry-36));
 
-		radix36_element nre(ele);
+		radix62_element nre(ele);
 		r.add_the_element(nre);	
 	}
 
 	return r;
 }
 
-bool operator>(const radix36 &r1,const radix36 &r2)
+bool operator>(const radix62 &r1,const radix62 &r2)
 {
 	if(r1.get_vec_size()>r2.get_vec_size())
 		return true;
@@ -334,7 +345,7 @@ bool operator>(const radix36 &r1,const radix36 &r2)
 	return false;//only happen when r1==r2
 }
 
-bool operator<(const radix36 &r1,const radix36 &r2)
+bool operator<(const radix62 &r1,const radix62 &r2)
 {
 	if(r1.get_vec_size()<r2.get_vec_size())
 		return true;
@@ -350,7 +361,7 @@ bool operator<(const radix36 &r1,const radix36 &r2)
 	return false;//only happen when r1==r2
 }
 
-bool operator==(const radix36 &r1,const radix36 &r2)
+bool operator==(const radix62 &r1,const radix62 &r2)
 {
 	if(r1.get_vec_size()<r2.get_vec_size())
 		return false;
@@ -366,7 +377,7 @@ bool operator==(const radix36 &r1,const radix36 &r2)
 	return true;//only happen when r1==r2
 }
 
-bool operator<=(const radix36 &r1,const radix36 &r2)
+bool operator<=(const radix62 &r1,const radix62 &r2)
 {
 	if(r1.get_vec_size()<r2.get_vec_size())
 		return true;
@@ -382,7 +393,7 @@ bool operator<=(const radix36 &r1,const radix36 &r2)
 	return true;//only happen when r1==r2
 }
 
-bool operator>=(const radix36 &r1,const radix36 &r2)
+bool operator>=(const radix62 &r1,const radix62 &r2)
 {
 	if(r1.get_vec_size()>r2.get_vec_size())
 		return true;
@@ -398,7 +409,7 @@ bool operator>=(const radix36 &r1,const radix36 &r2)
 	return true;//only happen when r1==r2
 }
 
-void radix36::clear_the_redundant_zeros()
+void radix62::clear_the_redundant_zeros()
 {
 	auto highest_digit=vec.end()-1;//the iterator point to the highest digit of the number
 	
@@ -410,38 +421,38 @@ void radix36::clear_the_redundant_zeros()
 	}
 }
 
-void radix36::add_the_element(radix36_element &re)
+void radix62::add_the_element(radix62_element &re)
 {
 	vec.push_back(re);
 }
 
-void radix36::change_element_in_vec(const radix36_element &r,const int &num)
+void radix62::change_element_in_vec(const radix62_element &r,const int &num)
 {
 	if(vec.size()>=num)
 		vec.at(num-1)=r;
 }//The number is counted from one
 
-bool radix36::if_positive() const
+bool radix62::if_positive() const
 {
 	return positive;
 }
 
-void radix36::set_positive(const bool &flag)
+void radix62::set_positive(const bool &flag)
 {
 	positive=flag;
 }
 
-void radix36::operator=(radix36 &r)
+void radix62::operator=(const radix62 &r)
 {
 	vec=r.vec;
 }
 
-inline int radix36::get_vec_size() const
+inline int radix62::get_vec_size() const
 {
 	return vec.size();
 }
 
-inline radix36_element radix36::get_char_in_vec(int subscript) const
+inline radix62_element radix62::get_char_in_vec(int subscript) const
 {
 	return vec.at(subscript);
 }
